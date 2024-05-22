@@ -20,6 +20,9 @@ app.use(express.static("public"));
 app.set("layout", "./layouts/main");
 app.set("view engine", "ejs");
 
+app.get("/about", (req, res) => {
+  res.render("about");
+});
 app.use("/", require("./server/routes/main"));
 
 app.listen(PORT, () => console.log(`server is running on port: ${PORT}`));
