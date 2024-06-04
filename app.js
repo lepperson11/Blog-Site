@@ -10,6 +10,11 @@ const PORT = 4000;
 
 const connectDB = require("./server/config/db");
 
+const cookieParser = require("cookie-parser");
+const MongoStore = require("connect-mongo");
+const methodOverride = require("method-override");
+const session = require("express-session");
+
 connectDB();
 
 app.use(express.urlencoded({ extended: true }));
@@ -23,6 +28,21 @@ app.set("view engine", "ejs");
 app.get("/about", (req, res) => {
   res.render("about");
 });
+
+app.use(cookieParser());
+app.use(methodOverride("_method"));
+
+app.use(
+  session({
+    secret: "keyboard cat",
+    resave: false,
+    saveUninitialized: true,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URI,
+    }),
+  })
+);
 app.use("/", require("./server/routes/main"));
+app.use("/", require("./server/routes/admin"));
 
 app.listen(PORT, () => console.log(`server is running on port: ${PORT}`));
